@@ -1,0 +1,45 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Swagger output (opcional, si generas docs)
+swagger.json
+swagger.yaml
+
+# VS Code
+.vscode/
+
+# IDEs
+.idea/
+*.iml
+
+# Output folders (si usas build script)
+dist/
+build/
+
+# Backup/temporary files
+*.bak
+*.tmp
+*.swp
+*~
+
+# Coverage (si usas tests)
+coverage/
+.nyc_output/
+
+# Optional: Git metadata
+.git/

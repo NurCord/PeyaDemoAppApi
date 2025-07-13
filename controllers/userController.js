@@ -1,16 +1,20 @@
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
 
 // Registro de usuario
 const registerUser = async (req, res) => {
   try {
-    const { email, fullName, encryptedPassword } = req.body;
+    const { email, fullName, password } = req.body;
 
     const exists = await User.findOne({ email });
     if (exists) {
       return res.status(409).json({ message: 'El usuario ya existe' });
     }
 
-    const newUser = new User({ email, fullName, encryptedPassword });
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newUser = new User({ email, fullName, encryptedPassword: hashedPassword });
     const saved = await newUser.save();
     res.status(201).json(saved);
   } catch (error) {
@@ -21,12 +25,13 @@ const registerUser = async (req, res) => {
 // Login (validación simple)
 const loginUser = async (req, res) => {
   try {
-    const { email, encryptedPassword } = req.body;
+    const { email, password } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-    if (user.encryptedPassword !== encryptedPassword) {
+    const isMatch = await bcrypt.compare(password, user.encryptedPassword);
+    if (!isMatch) {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
 

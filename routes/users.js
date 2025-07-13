@@ -22,13 +22,13 @@ const {
  *             required:
  *               - email
  *               - fullName
- *               - encryptedPassword
+ *               - password
  *             properties:
  *               email:
  *                 type: string
  *               fullName:
  *                 type: string
- *               encryptedPassword:
+ *               password:
  *                 type: string
  *     responses:
  *       201:
@@ -50,11 +50,11 @@ const {
  *             type: object
  *             required:
  *               - email
- *               - encryptedPassword
+ *               - password
  *             properties:
  *               email:
  *                 type: string
- *               encryptedPassword:
+ *               password:
  *                 type: string
  *     responses:
  *       200:

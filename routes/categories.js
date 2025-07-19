@@ -17,7 +17,7 @@ const {
  *       200:
  *         description: Lista de categorías
  * 
- *  post:
+ *   post:
  *     summary: Crear una nueva categoría
  *     tags: [Categories]
  *     requestBody:

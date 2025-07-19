@@ -34,7 +34,7 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
-
+    // TO-DO: ver como manejar las respuestas con mensajes o data
     res.json({ message: 'Login exitoso', user });
   } catch (error) {
     res.status(500).json({ message: 'Error al iniciar sesión', error });

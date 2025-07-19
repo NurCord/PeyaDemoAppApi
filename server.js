@@ -14,8 +14,11 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('DB connection error:', err));
 
-const foodRoutes = require('./routes/foods');
-app.use('/foods', foodRoutes);
+const productRoutes = require('./routes/products');
+app.use('/products', productRoutes);
+
+const categoryRoutes = require('./routes/categories');
+app.use('/categories', categoryRoutes);
 
 const userRoutes = require('./routes/users');
 app.use('/users', userRoutes);

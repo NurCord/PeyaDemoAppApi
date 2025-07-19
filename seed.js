@@ -4,9 +4,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Modelos
-const Food = require('./models/Food');
 const User = require('./models/User');
 const Order = require('./models/Order');
+const Product = require('./models/Product');
+const Category = require('./models/Category');
 
 // Leer archivo JSON
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'seed_data.json'), 'utf-8'));
@@ -20,12 +21,22 @@ async function seedDatabase() {
     console.log('🔌 Conectado a MongoDB Atlas');
 
     console.log('🧹 Limpiando colecciones existentes...');
-    await Food.deleteMany();
+
+    await Category.deleteMany();
+    await Product.deleteMany();
     await User.deleteMany();
     await Order.deleteMany();
 
-    console.log('🍔 Insertando comidas...');
-    await Food.insertMany(data.foods);
+    console.log("📂 Insertando categorías...");
+    const categories = await Category.insertMany(data.categories);
+
+    console.log('🍔 Insertando productos...');
+    await Product.insertMany(data.products.map(product => {
+      return {
+        ...product,
+        categoryId: categories.find(cat => cat.name === "Foods")._id
+      };
+    }));
 
     console.log('👤 Insertando usuario demo...');
     await User.create(data.user);

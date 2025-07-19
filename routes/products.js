@@ -1,27 +1,27 @@
-// routes/foods.js
+// routes/products.js
 const express = require('express');
 const router = express.Router();
 const {
-  getAllFoods,
-  getFoodById,
-  createFood,
-  updateFood,
-  deleteFood
-} = require('../controllers/foodController');
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct
+} = require('../controllers/productController');
 
 /**
  * @swagger
- * /foods:
+ * /products:
  *   get:
- *     summary: Obtener todos los productos (foods)
- *     tags: [Foods]
+ *     summary: Obtener todos los productos (products)
+ *     tags: [Products]
  *     responses:
  *       200:
  *         description: Lista de productos
  *
  *   post:
  *     summary: Crear un nuevo producto
- *     tags: [Foods]
+ *     tags: [Products]
  *     requestBody:
  *       required: true
  *       content:
@@ -41,8 +41,6 @@ const {
  *                 type: string
  *               price:
  *                 type: number
- *               hasDrink:
- *                 type: boolean
  *     responses:
  *       201:
  *         description: Producto creado
@@ -50,10 +48,10 @@ const {
 
 /**
  * @swagger
- * /foods/{id}:
+ * /products/{id}:
  *   get:
  *     summary: Obtener un producto por ID
- *     tags: [Foods]
+ *     tags: [Products]
  *     parameters:
  *       - in: path
  *         name: id
@@ -67,7 +65,7 @@ const {
  *
  *   put:
  *     summary: Actualizar un producto por ID
- *     tags: [Foods]
+ *     tags: [Products]
  *     parameters:
  *       - in: path
  *         name: id
@@ -97,7 +95,7 @@ const {
  *
  *   delete:
  *     summary: Eliminar un producto por ID
- *     tags: [Foods]
+ *     tags: [Products]
  *     parameters:
  *       - in: path
  *         name: id
@@ -109,10 +107,10 @@ const {
  *         description: Producto eliminado
  */
 
-router.get('/', getAllFoods);
-router.get('/:id', getFoodById);
-router.post('/', createFood);
-router.put('/:id', updateFood);
-router.delete('/:id', deleteFood);
+router.get('/', getAllProducts);
+router.get('/:id', getProductById);
+router.post('/', createProduct);
+router.put('/:id', updateProduct);
+router.delete('/:id', deleteProduct);
 
 module.exports = router;

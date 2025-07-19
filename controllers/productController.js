@@ -1,31 +1,31 @@
-const Food = require('../models/Food');
+const Product = require('../models/Product');
 
 // Obtener todos los productos
-const getAllFoods = async (req, res) => {
+const getAllProducts = async (req, res) => {
   try {
-    const foods = await Food.find();
-    res.json(foods);
+    const products = await Product.find().populate('category').sort({ name: 1 });
+    res.json(products);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener productos', error });
   }
 };
 
 // Obtener un solo producto
-const getFoodById = async (req, res) => {
+const getProductById = async (req, res) => {
   try {
-    const food = await Food.findById(req.params.id);
-    if (!food) return res.status(404).json({ message: 'Producto no encontrado' });
-    res.json(food);
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: 'Producto no encontrado' });
+    res.json(product);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener producto', error });
   }
 };
 
 // Crear un nuevo producto
-const createFood = async (req, res) => {
+const createProduct = async (req, res) => {
   try {
-    const food = new Food(req.body);
-    const saved = await food.save();
+    const product = new Product(req.body);
+    const saved = await product.save();
     res.status(201).json(saved);
   } catch (error) {
     res.status(400).json({ message: 'Error al crear producto', error });
@@ -33,9 +33,9 @@ const createFood = async (req, res) => {
 };
 
 // Actualizar un producto
-const updateFood = async (req, res) => {
+const updateProduct = async (req, res) => {
   try {
-    const updated = await Food.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ message: 'Producto no encontrado' });
     res.json(updated);
   } catch (error) {
@@ -44,9 +44,9 @@ const updateFood = async (req, res) => {
 };
 
 // Eliminar un producto
-const deleteFood = async (req, res) => {
+const deleteProduct = async (req, res) => {
   try {
-    const deleted = await Food.findByIdAndDelete(req.params.id);
+    const deleted = await Product.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: 'Producto no encontrado' });
     res.json({ message: 'Producto eliminado correctamente' });
   } catch (error) {
@@ -55,9 +55,9 @@ const deleteFood = async (req, res) => {
 };
 
 module.exports = {
-  getAllFoods,
-  getFoodById,
-  createFood,
-  updateFood,
-  deleteFood
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct
 };

@@ -32,9 +32,10 @@ async function seedDatabase() {
 
     console.log('🍔 Insertando productos...');
     await Product.insertMany(data.products.map(product => {
+      const category = categories.find(cat => cat.name === product.category);
       return {
         ...product,
-        categoryId: categories.find(cat => cat.name === "Foods")._id
+        categoryId: category ? category._id : categories.find(cat => cat.name === "Foods")._id
       };
     }));
 

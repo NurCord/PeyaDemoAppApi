@@ -1,5 +1,29 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const { encrypt, decrypt } = require('../utils/encryption');
+
+// Función helper para preparar respuesta de usuario
+const prepareUserResponse = (user) => {
+  let decryptedPassword = '';
+  try {
+    // Intentar desencriptar la contraseña
+    decryptedPassword = decrypt(user.encryptedPassword);
+  } catch (error) {
+    // Si falla la desencriptación, usar una contraseña por defecto
+    console.warn('Error desencriptando contraseña:', error.message);
+    decryptedPassword = 'password123';
+  }
+
+  return {
+    _id: user._id,
+    email: user.email,
+    fullName: user.fullName,
+    password: decryptedPassword, // Contraseña desencriptada
+    userImageUrl: user.userImageUrl,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
+  };
+};
 
 // Registro de usuario
 const registerUser = async (req, res) => {
@@ -11,18 +35,20 @@ const registerUser = async (req, res) => {
       return res.status(409).json({ message: 'El usuario ya existe' });
     }
 
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const encryptedPassword = encrypt(password);
 
-    const newUser = new User({ email, fullName, encryptedPassword: hashedPassword });
+    const newUser = new User({ email, fullName, encryptedPassword });
     const saved = await newUser.save();
-    res.status(201).json(saved);
+    
+    // Enviar respuesta con contraseña desencriptada
+    const userResponse = prepareUserResponse(saved);
+    res.status(201).json(userResponse);
   } catch (error) {
     res.status(500).json({ message: 'Error al registrar usuario', error });
   }
 };
 
-// Login (validación simple)
+// Login (validación con contraseña encriptada)
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -30,12 +56,21 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-    const isMatch = await bcrypt.compare(password, user.encryptedPassword);
-    if (!isMatch) {
+    // Desencriptar y comparar
+    let decryptedPassword;
+    try {
+      decryptedPassword = decrypt(user.encryptedPassword);
+    } catch (error) {
+      return res.status(401).json({ message: 'Error en la contraseña almacenada' });
+    }
+
+    if (password !== decryptedPassword) {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
-    // TO-DO: ver como manejar las respuestas con mensajes o data
-    res.json({ message: 'Login exitoso', user });
+    
+    // Enviar respuesta con contraseña desencriptada
+    const userResponse = prepareUserResponse(user);
+    res.json({ message: 'Login exitoso', user: userResponse });
   } catch (error) {
     res.status(500).json({ message: 'Error al iniciar sesión', error });
   }
@@ -46,7 +81,10 @@ const getUserByEmail = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email });
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
-    res.json(user);
+    
+    // Enviar respuesta con contraseña desencriptada
+    const userResponse = prepareUserResponse(user);
+    res.json(userResponse);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener usuario', error });
   }
@@ -74,12 +112,13 @@ const updateUserInfo = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    res.json(user);
+    // Enviar respuesta con contraseña desencriptada
+    const userResponse = prepareUserResponse(user);
+    res.json(userResponse);
   } catch (error) {
     res.status(500).json({ message: 'Error al actualizar usuario', error });
   }
 };
-
 
 module.exports = {
   registerUser,

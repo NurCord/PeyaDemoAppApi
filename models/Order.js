@@ -28,9 +28,14 @@ const OrderItemSchema = new mongoose.Schema({
 });
 
 const OrderSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   orderDate: {
     type: Number,
-    default: Date.now
+    default: Date.now()
   },
   totalAmount: {
     type: Number,
@@ -43,4 +48,5 @@ const OrderSchema = new mongoose.Schema({
   orderItems: [OrderItemSchema]
 }, { timestamps: true });
 
+// Export only the Order model since OrderItem is a subdocument
 module.exports = mongoose.model('Order', OrderSchema);

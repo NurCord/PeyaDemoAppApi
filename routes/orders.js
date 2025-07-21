@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createOrder, getOrders } = require('../controllers/orderController');
+const { createOrder, getOrders, getOrderById } = require('../controllers/orderController');
 
 /**
  * @swagger
@@ -15,34 +15,37 @@ const { createOrder, getOrders } = require('../controllers/orderController');
  *           schema:
  *             type: object
  *             required:
- *               - orderId
- *               - productIds
- *               - total
- *               - timestamp
+ *               - userId
+ *               - orderItems
+ *               - totalAmount
+ *               - totalItems
  *             properties:
- *               orderId:
+ *               userId:
  *                 type: string
- *               productIds:
+ *                 description: ID del usuario que hace el pedido
+ *               orderItems:
  *                 type: array
  *                 items:
  *                   type: object
  *                   properties:
- *                     name:
+ *                     productId:
  *                       type: string
- *                     description:
+ *                     productName:
  *                       type: string
- *                     imageUrl:
+ *                     productDescription:
  *                       type: string
- *                     price:
+ *                     productImageUrl:
+ *                       type: string
+ *                     productPrice:
  *                       type: number
- *                     hasDrink:
- *                       type: boolean
  *                     quantity:
  *                       type: integer
- *               total:
+ *               totalAmount:
  *                 type: number
- *               timestamp:
+ *                 description: Monto total del pedido
+ *               totalItems:
  *                 type: integer
+ *                 description: Número total de items
  *     responses:
  *       201:
  *         description: Pedido creado exitosamente
@@ -52,11 +55,50 @@ const { createOrder, getOrders } = require('../controllers/orderController');
  *         description: Error en el servidor
  *
  *   get:
- *     summary: Obtener el historial de pedidos
+ *     summary: Obtener el historial de pedidos de un usuario
  *     tags: [Orders]
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del usuario para filtrar pedidos
  *     responses:
  *       200:
- *         description: Lista de pedidos
+ *         description: Lista de pedidos del usuario
+ *       400:
+ *         description: userId no proporcionado
+ *       500:
+ *         description: Error en el servidor
+ */
+
+/**
+ * @swagger
+ * /orders/{orderId}:
+ *   get:
+ *     summary: Obtener un pedido específico por ID
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del pedido
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del usuario para verificar propiedad del pedido
+ *     responses:
+ *       200:
+ *         description: Pedido encontrado
+ *       400:
+ *         description: userId no proporcionado
+ *       404:
+ *         description: Pedido no encontrado
  *       500:
  *         description: Error en el servidor
  */
@@ -64,5 +106,6 @@ const { createOrder, getOrders } = require('../controllers/orderController');
 // Endpoints
 router.post('/', createOrder);
 router.get('/', getOrders);
+router.get('/:orderId', getOrderById);
 
 module.exports = router;

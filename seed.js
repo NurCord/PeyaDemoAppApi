@@ -39,7 +39,25 @@ async function seedDatabase() {
     }));
 
     console.log('👤 Insertando usuario demo...');
-    await User.create(data.user);
+    const user = await User.create(data.user);
+    const products = await Product.find().limit(2);
+
+    console.log('👤 Insertando usuario order in user...');
+    await Order.create({
+      userId: user._id,
+      orderDate: new Date().getTime(),
+      totalAmount: products.reduce((total, product) => total + product.price, 0),
+      totalItems: products.length,
+      orderItems: products.map(product => ({
+        productId: product._id.toString(),
+        productName: product.name,
+        productDescription: product.description,
+        productImageUrl: product.imageUrl,
+        productPrice: product.price,
+        quantity: 1,
+      }))
+    });
+
 
     console.log('✅ Base de datos poblada con éxito!');
     process.exit(0);

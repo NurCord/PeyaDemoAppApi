@@ -1,24 +1,29 @@
 const Order = require('../models/Order');
+const { 
+  createListResponse, 
+  createObjectResponse, 
+  createErrorResponse 
+} = require('../utils/apiResponse');
 
-// Crear un nuevo pedido
+// Create a new order
 const createOrder = async (req, res) => {
   try {
     const { userId, orderItems, totalAmount, totalItems } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ message: 'userId es requerido' });
+      return res.status(400).json(createErrorResponse('userId is required'));
     }
 
     if (!Array.isArray(orderItems) || orderItems.length === 0) {
-      return res.status(400).json({ message: 'orderItems debe ser un array con al menos un item.' });
+      return res.status(400).json(createErrorResponse('orderItems must be an array with at least one item.'));
     }
 
     if (!totalAmount || totalAmount <= 0) {
-      return res.status(400).json({ message: 'totalAmount debe ser mayor a 0' });
+      return res.status(400).json(createErrorResponse('totalAmount must be greater than 0'));
     }
 
     if (!totalItems || totalItems <= 0) {
-      return res.status(400).json({ message: 'totalItems debe ser mayor a 0' });
+      return res.status(400).json(createErrorResponse('totalItems must be greater than 0'));
     }
 
     const orderData = {
@@ -32,37 +37,30 @@ const createOrder = async (req, res) => {
     const order = new Order(orderData);
     const savedOrder = await order.save();
     
-    res.status(201).json({
-      message: 'Pedido creado exitosamente',
-      order: savedOrder
-    });
+    res.status(201).json(createObjectResponse(savedOrder, 'Order created successfully'));
   } catch (error) {
-    console.error('Error al crear pedido:', error);
-    res.status(500).json({ message: 'Error al crear pedido', error: error.message });
+    console.error('Error creating order:', error);
+    res.status(500).json(createErrorResponse('Error creating order'));
   }
 };
 
-// Obtener historial de pedidos de un usuario
+// Get user order history
 const getOrders = async (req, res) => {
   try {
     const { userId } = req.query;
 
     if (!userId) {
-      return res.status(400).json({ message: 'userId es requerido como parámetro de query' });
+      return res.status(400).json(createErrorResponse('userId is required as query parameter'));
     }
 
     const orders = await Order.find({ userId })
       .sort({ createdAt: -1 })
       .populate('userId', 'name email');
 
-    res.json({
-      message: 'Pedidos obtenidos exitosamente',
-      count: orders.length,
-      orders
-    });
+    res.json(createListResponse(orders, 'Orders retrieved successfully'));
   } catch (error) {
-    console.error('Error al obtener pedidos:', error);
-    res.status(500).json({ message: 'Error al obtener pedidos', error: error.message });
+    console.error('Error retrieving orders:', error);
+    res.status(500).json(createErrorResponse('Error retrieving orders'));
   }
 };
 
@@ -72,23 +70,20 @@ const getOrderById = async (req, res) => {
     const { userId } = req.query;
 
     if (!userId) {
-      return res.status(400).json({ message: 'userId es requerido como parámetro de query' });
+      return res.status(400).json(createErrorResponse('userId is required as query parameter'));
     }
 
     const order = await Order.findOne({ _id: orderId, userId })
       .populate('userId', 'name email');
 
     if (!order) {
-      return res.status(404).json({ message: 'Pedido no encontrado' });
+      return res.status(404).json(createErrorResponse('Order not found'));
     }
 
-    res.json({
-      message: 'Pedido obtenido exitosamente',
-      order
-    });
+    res.json(createObjectResponse(order, 'Order retrieved successfully'));
   } catch (error) {
-    console.error('Error al obtener pedido:', error);
-    res.status(500).json({ message: 'Error al obtener pedido', error: error.message });
+    console.error('Error retrieving order:', error);
+    res.status(500).json(createErrorResponse('Error retrieving order'));
   }
 };
 

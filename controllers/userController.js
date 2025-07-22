@@ -7,27 +7,16 @@ const {
 } = require('../utils/apiResponse');
 
 // Helper function to prepare user response
-const prepareUserResponse = (user) => {
-  let decryptedPassword = '';
-  try {
-    // Try to decrypt the password
-    decryptedPassword = decrypt(user.encryptedPassword);
-  } catch (error) {
-    // If decryption fails, use a default password
-    console.warn('Error decrypting password:', error.message);
-    decryptedPassword = 'password123';
-  }
-
-  return {
+const prepareUserResponse = (user) => ({
     _id: user._id,
     email: user.email,
     fullName: user.fullName,
-    password: decryptedPassword,
+    password: decrypt(user.encryptedPassword),
     userImageUrl: user.userImageUrl,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt
-  };
-};
+});
+
 
 // User registration
 const registerUser = async (req, res) => {
@@ -63,14 +52,9 @@ const loginUser = async (req, res) => {
     }
 
     // Decrypt and compare
-    let decryptedPassword;
-    try {
-      decryptedPassword = decrypt(user.encryptedPassword);
-    } catch (error) {
-      return res.status(401).json(createErrorResponse('Error with stored password'));
-    }
+    let decryptedPassword = decrypt(user.encryptedPassword);
 
-    if (password !== decryptedPassword) {
+    if (!decryptedPassword || password !== decryptedPassword) {
       return res.status(401).json(createErrorResponse('Incorrect password'));
     }
     

@@ -54,8 +54,7 @@ const getOrders = async (req, res) => {
     }
 
     const orders = await Order.find({ userId })
-      .sort({ createdAt: -1 })
-      .populate('userId', 'name email');
+      .sort({ createdAt: -1 });
 
     res.json(createListResponse(orders, 'Orders retrieved successfully'));
   } catch (error) {
@@ -73,8 +72,7 @@ const getOrderById = async (req, res) => {
       return res.status(400).json(createErrorResponse('userId is required as query parameter'));
     }
 
-    const order = await Order.findOne({ _id: orderId, userId })
-      .populate('userId', 'name email');
+    const order = await Order.findOne({ _id: orderId, userId });
 
     if (!order) {
       return res.status(404).json(createErrorResponse('Order not found'));

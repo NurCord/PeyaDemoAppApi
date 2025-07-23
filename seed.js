@@ -40,7 +40,11 @@ async function seedDatabase() {
     }));
 
     console.log('👤 Insertando usuario demo...');
-    const user = await User.create(data.user);
+    const encryptedPassword = require('./utils/encryption').encrypt(data.user.encryptedPassword);
+    const user = await User.create({
+      ...data.user,
+      encryptedPassword,
+    });
     const products = await Product.find().limit(2);
 
     console.log('👤 Insertando usuario order in user...');

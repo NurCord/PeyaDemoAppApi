@@ -83,7 +83,7 @@ https://tu-api.onrender.com
 
 Prueba:
 
-- `GET https://tu-api.onrender.com/foods`
+- `GET https://tu-api.onrender.com/products`
 - `GET https://tu-api.onrender.com/api-docs` (Swagger)
 
 ---
@@ -104,21 +104,26 @@ Esto insertará productos y un usuario demo.
 
 ## 📚 Endpoints disponibles
 
-- **Foods**
-  - `GET /foods`
-  - `POST /foods`
-  - `GET /foods/:id`
-  - `PUT /foods/:id`
-  - `DELETE /foods/:id`
+- **Products**
+  - `GET /products`
+  - `POST /products`
+  - `GET /products/:id`
+  - `PUT /products/:id`
+  - `DELETE /products/:id`
+- **Categories**
+  - `GET /categories`
+  - `POST /categories`
 - **Users**
   - `POST /users/register`
   - `POST /users/login`
   - `GET /users/:email`
+  - `PUT /users/update/:email`
 - **Orders**
   - `POST /orders`
-  - `GET /orders`
+  - `GET /orders?userId=:userId`
+  - `GET /orders/:orderId?userId=:userId`
 
-Consulta la documentación en [Swagger](https://tu-api.onrender.com/api-docs).
+Consulta la documentación completa en [Swagger](https://tu-api.onrender.com/api-docs).
 
 ---
 

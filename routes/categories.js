@@ -9,6 +9,24 @@ const {
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Category:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *         name:
+ *           type: string
+ *         description:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *
  * /categories:
  *   get:
  *     summary: Obtener todas las categorías activas
@@ -16,6 +34,12 @@ const {
  *     responses:
  *       200:
  *         description: Lista de categorías
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Category'
  * 
  *   post:
  *     summary: Crear una nueva categoría
@@ -35,7 +59,15 @@ const {
  *                 type: string
  *     responses:
  *       201:
- *         description: Categoria creada
+ *         description: Categoría creada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *       400:
+ *         description: Datos inválidos
+ *       500:
+ *         description: Error en el servidor
  */
 
 router.get('/', getAllCategories);

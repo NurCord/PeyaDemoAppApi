@@ -11,13 +11,45 @@ const {
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *         name:
+ *           type: string
+ *         description:
+ *           type: string
+ *         imageUrl:
+ *           type: string
+ *         price:
+ *           type: number
+ *         hasDrink:
+ *           type: boolean
+ *         category:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *
  * /products:
  *   get:
- *     summary: Obtener todos los productos (products)
+ *     summary: Obtener todos los productos
  *     tags: [Products]
  *     responses:
  *       200:
  *         description: Lista de productos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
  *
  *   post:
  *     summary: Crear un nuevo producto
@@ -44,6 +76,14 @@ const {
  *     responses:
  *       201:
  *         description: Producto creado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Datos inválidos
+ *       500:
+ *         description: Error en el servidor
  */
 
 /**
@@ -62,6 +102,14 @@ const {
  *     responses:
  *       200:
  *         description: Detalle del producto
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error en el servidor
  *
  *   put:
  *     summary: Actualizar un producto por ID
@@ -92,6 +140,14 @@ const {
  *     responses:
  *       200:
  *         description: Producto actualizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error en el servidor
  *
  *   delete:
  *     summary: Eliminar un producto por ID
@@ -104,7 +160,11 @@ const {
  *           type: string
  *     responses:
  *       200:
- *         description: Producto eliminado
+ *         description: Producto eliminado exitosamente
+ *       404:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error en el servidor
  */
 
 router.get('/', getAllProducts);

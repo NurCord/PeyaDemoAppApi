@@ -21,7 +21,25 @@ const prepareUserResponse = (user) => ({
 // User registration
 const registerUser = async (req, res) => {
   try {
-    const { email, fullName, password } = req.body;
+    console.log('Request body:', req.body);
+    console.log('Request body keys:', Object.keys(req.body));
+    console.log('Request body type:', typeof req.body);
+    
+    // Check if req.body is properly parsed
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json(createErrorResponse('Invalid request body format'));
+    }
+    
+    const { fullName, email, password } = req.body;
+
+    console.log({ fullName, email, password });
+
+    // Validate required fields
+    if (!email || !fullName || !password) {
+      console.log('Missing fields - email:', !!email, 'fullName:', !!fullName, 'password:', !!password);
+      console.log('Field values - email:', email, 'fullName:', fullName, 'password:', password);
+      return res.status(400).json(createErrorResponse('Email, fullName, and password are required'));
+    }
 
     const exists = await User.findOne({ email });
     if (exists) {
@@ -32,12 +50,16 @@ const registerUser = async (req, res) => {
 
     const newUser = new User({ email, fullName, encryptedPassword });
     const saved = await newUser.save();
-    
+    console.log(saved);
     // Send response with decrypted password
     const userResponse = prepareUserResponse(saved);
     res.status(201).json(createObjectResponse(userResponse, 'User registered successfully'));
   } catch (error) {
-    res.status(500).json(createErrorResponse('Error registering user'));
+    console.error('Registration error:', error);
+    if (error.message === 'Text to encrypt must be a non-empty string') {
+      return res.status(400).json(createErrorResponse('Password is required and must be a string'));
+    }
+    res.status(500).json(createErrorResponse('Error registering user: ' + error.message));
   }
 };
 

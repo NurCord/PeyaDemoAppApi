@@ -1,9 +1,16 @@
 const crypto = require('crypto');
 
+if (!process.env.ENCRYPTION_KEY) {
+  throw new Error('ENCRYPTION_KEY environment variable is not set');
+}
+
 const ENCRYPTION_KEY = Buffer.from(process.env.ENCRYPTION_KEY, 'hex');
 const algorithm = 'aes-256-cbc';
 
 function encrypt(text) {
+  if (!text || typeof text !== 'string') {
+    throw new Error('Text to encrypt must be a non-empty string');
+  }
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(algorithm, ENCRYPTION_KEY, iv);
   let encrypted = cipher.update(text, 'utf8', 'hex');
